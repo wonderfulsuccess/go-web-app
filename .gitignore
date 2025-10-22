@@ -23,4 +23,5 @@ front/node_modules
 
 # backend
 back/app/data
+back/data
 release
