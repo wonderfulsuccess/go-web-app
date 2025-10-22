@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // DatabaseType represents the configured database driver.
@@ -22,6 +23,7 @@ const (
 type DatabaseConfig struct {
 	Type DatabaseType
 	DSN  string
+	Log  bool
 }
 
 // Config centralises configuration used by the application runtime.
@@ -29,6 +31,7 @@ type Config struct {
 	Port      string
 	StaticDir string
 	Database  DatabaseConfig
+	Mode      string
 }
 
 // Load reads environment variables and provides sane defaults so the
@@ -59,7 +62,9 @@ func Load() Config {
 		Database: DatabaseConfig{
 			Type: dbType,
 			DSN:  dbDSN,
+			Log:  parseBool(os.Getenv("DB_LOG_SQL"), false),
 		},
+		Mode: firstNonEmpty(os.Getenv("GIN_MODE"), "release"),
 	}
 }
 
@@ -74,4 +79,17 @@ func firstNonEmpty(values ...string) string {
 		}
 	}
 	return ""
+}
+
+func parseBool(value string, fallback bool) bool {
+	switch strings.ToLower(strings.TrimSpace(value)) {
+	case "":
+		return fallback
+	case "true", "t", "1", "yes", "y", "on":
+		return true
+	case "false", "f", "0", "no", "n", "off":
+		return false
+	default:
+		return fallback
+	}
 }

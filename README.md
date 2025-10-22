@@ -32,6 +32,7 @@ front 为前端目录
    - `STATIC_DIR`：静态资源目录，默认 `back/webserver/dist`
    - `DB_TYPE`：数据库类型，可选 `sqlite`（默认）/`mysql`/`postgres`
    - `DB_DSN`：数据库连接串。使用 `sqlite` 时默认生成 `back/data/app.db`
+   - `DB_LOG_SQL`：是否输出 Gorm SQL 日志，默认关闭，设置为 `true` 启用
 
 > 数据模型存放在 `back/model`，控制器在 `back/controller`。`back/webserver` 统一注册路由、API 与 WebSocket 入口，同时负责分发 `front` 构建出的静态资源。
 

@@ -2,10 +2,12 @@ package webserver
 
 import (
 	"context"
+	"io"
 	"log"
 	"net/http"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
 	"github.com/wonderfulsuccess/go-web-app/back/config"
@@ -19,6 +21,12 @@ type Server struct {
 }
 
 func NewServer(cfg config.Config, db *gorm.DB) *Server {
+	gin.SetMode(cfg.Mode)
+	if cfg.Mode == gin.ReleaseMode {
+		gin.DefaultWriter = io.Discard
+		gin.DefaultErrorWriter = io.Discard
+	}
+
 	hub := NewHub()
 	router := NewRouter(cfg, db, hub)
 

@@ -21,7 +21,12 @@ func InitDatabase(cfg config.DatabaseConfig) (*gorm.DB, error) {
 		err error
 	)
 
-	gormCfg := &gorm.Config{Logger: logger.Default.LogMode(logger.Info)}
+	logMode := logger.Silent
+	if cfg.Log {
+		logMode = logger.Info
+	}
+
+	gormCfg := &gorm.Config{Logger: logger.Default.LogMode(logMode)}
 
 	switch cfg.Type {
 	case config.DBTypeSQLite:
