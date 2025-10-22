@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-
-	"github.com/wonderfulsuccess/go-web-app/back/utils/crawler"
 )
 
 const cURL = `
@@ -25,10 +23,6 @@ curl 'https://sf.taobao.com/list/50025969.htm?spm=a213w.7398504.pagination.1.181
 `
 
 func main() {
-	result, err := crawler.RunCURL(cURL)
-	if err != nil {
-		fmt.Println(err)
-		panic(err)
-	}
+  result := "1234"
 	fmt.Println(result)
 }
