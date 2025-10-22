@@ -2,6 +2,7 @@ package webserver
 
 import (
 	"net/http"
+	"os"
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
@@ -29,12 +30,26 @@ func NewRouter(cfg config.Config, db *gorm.DB, hub *Hub) *gin.Engine {
 	}
 
 	// Serve the compiled front-end assets.
-	router.Static("/static", filepath.Join(cfg.StaticDir, "assets"))
-	router.StaticFile("/favicon.ico", filepath.Join(cfg.StaticDir, "favicon.ico"))
-	router.StaticFile("/manifest.webmanifest", filepath.Join(cfg.StaticDir, "manifest.webmanifest"))
+	assetDir := filepath.Join(cfg.StaticDir, "assets")
+	if stat, err := os.Stat(assetDir); err == nil && stat.IsDir() {
+		router.Static("/assets", assetDir)
+	}
+	bindStaticFile := func(route, filename string) {
+		path := filepath.Join(cfg.StaticDir, filename)
+		if _, err := os.Stat(path); err == nil {
+			router.StaticFile(route, path)
+		}
+	}
+	bindStaticFile("/favicon.ico", "favicon.ico")
+	bindStaticFile("/manifest.webmanifest", "manifest.webmanifest")
 
 	router.NoRoute(func(c *gin.Context) {
-		c.File(filepath.Join(cfg.StaticDir, "index.html"))
+		indexPath := filepath.Join(cfg.StaticDir, "index.html")
+		if _, err := os.Stat(indexPath); err != nil {
+			c.Status(http.StatusNotFound)
+			return
+		}
+		c.File(indexPath)
 	})
 
 	return router

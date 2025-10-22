@@ -8,8 +8,8 @@ import (
 	"syscall"
 
 	"github.com/wonderfulsuccess/go-web-app/back/config"
+	"github.com/wonderfulsuccess/go-web-app/back/database"
 	"github.com/wonderfulsuccess/go-web-app/back/model"
-	"github.com/wonderfulsuccess/go-web-app/back/utils"
 	"github.com/wonderfulsuccess/go-web-app/back/webserver"
 )
 
@@ -19,7 +19,7 @@ func main() {
 
 	cfg := config.Load()
 
-	db, err := utils.InitDatabase(cfg.Database)
+	db, err := database.InitDatabase(cfg.Database)
 	if err != nil {
 		log.Fatalf("failed to initialise database: %v", err)
 	}

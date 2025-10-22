@@ -51,6 +51,8 @@ front 为前端目录
    npm run build
    ```
 
+   完成构建后，直接启动后端服务即可通过 [http://localhost:8080/](http://localhost:8080/) 访问页面。
+
 > TailwindCSS、shadcn/ui 与 react-icons 已预配置，可直接在 `src` 下按需引入。前端路由基于 `react-router-dom`，默认包含仪表盘、用户管理、系统设置三个页面，并支持亮暗主题切换。
 
 ### WebSocket 使用
