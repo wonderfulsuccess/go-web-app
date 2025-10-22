@@ -2,18 +2,21 @@ package main
 
 import (
 	"context"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/wonderfulsuccess/go-web-app/back/config"
 	"github.com/wonderfulsuccess/go-web-app/back/database"
+	"github.com/wonderfulsuccess/go-web-app/back/logger"
 	"github.com/wonderfulsuccess/go-web-app/back/model"
 	"github.com/wonderfulsuccess/go-web-app/back/webserver"
 )
 
 func main() {
+
+	logger.Infof("Starting server...")
+
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
@@ -21,16 +24,16 @@ func main() {
 
 	db, err := database.InitDatabase(cfg.Database)
 	if err != nil {
-		log.Fatalf("failed to initialise database: %v", err)
+		logger.Errorf("failed to initialise database: %v", err)
 	}
 
 	if err := model.AutoMigrate(db); err != nil {
-		log.Fatalf("failed to migrate database schema: %v", err)
+		logger.Errorf("failed to migrate database schema: %v", err)
 	}
 
 	server := webserver.NewServer(cfg, db)
 
 	if err := server.Start(ctx); err != nil {
-		log.Fatalf("server exited with error: %v", err)
+		logger.Errorf("server exited with error: %v", err)
 	}
 }
