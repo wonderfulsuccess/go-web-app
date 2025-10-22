@@ -22,5 +22,6 @@ export default defineConfig({
   },
   build: {
     outDir: "../back/webserver/dist",
+    emptyOutDir: true,
   },
 });
