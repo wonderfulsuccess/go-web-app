@@ -83,7 +83,12 @@ function UsersPage() {
             <CardDescription>查看和维护后台数据库中的用户。</CardDescription>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={fetchUsers} disabled={loading}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={fetchUsers}
+              disabled={loading}
+            >
               <FiRefreshCcw className="mr-2 h-4 w-4" /> 刷新
             </Button>
             <Button size="sm" onClick={createUser}>
@@ -106,7 +111,9 @@ function UsersPage() {
                     <th className="px-4 py-2 text-left font-medium">姓名</th>
                     <th className="px-4 py-2 text-left font-medium">邮箱</th>
                     <th className="px-4 py-2 text-left font-medium">角色</th>
-                    <th className="px-4 py-2 text-left font-medium">创建时间</th>
+                    <th className="px-4 py-2 text-left font-medium">
+                      创建时间
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -115,8 +122,12 @@ function UsersPage() {
                       <td className="px-4 py-2 font-medium text-foreground">
                         {user.name}
                       </td>
-                      <td className="px-4 py-2 text-muted-foreground">{user.email}</td>
-                      <td className="px-4 py-2 text-muted-foreground">{user.role}</td>
+                      <td className="px-4 py-2 text-muted-foreground">
+                        {user.email}
+                      </td>
+                      <td className="px-4 py-2 text-muted-foreground">
+                        {user.role}
+                      </td>
                       <td className="px-4 py-2 text-muted-foreground">
                         {new Date(user.createdAt).toLocaleString()}
                       </td>

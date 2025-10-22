@@ -11,9 +11,17 @@ import SettingsPage from "@/pages/settings";
 import UsersPage from "@/pages/users";
 
 const NAVIGATION = [
-  { to: "/dashboard", label: "仪表盘", icon: <FiActivity className="h-4 w-4" /> },
+  {
+    to: "/dashboard",
+    label: "仪表盘",
+    icon: <FiActivity className="h-4 w-4" />,
+  },
   { to: "/users", label: "用户管理", icon: <FiUsers className="h-4 w-4" /> },
-  { to: "/settings", label: "系统设置", icon: <FiSettings className="h-4 w-4" /> },
+  {
+    to: "/settings",
+    label: "系统设置",
+    icon: <FiSettings className="h-4 w-4" />,
+  },
 ];
 
 function App() {
@@ -26,7 +34,9 @@ function App() {
       <header className="border-b bg-background/80 backdrop-blur">
         <div className="container flex h-16 items-center justify-between gap-4">
           <div className="flex items-center gap-6">
-            <span className="text-lg font-semibold tracking-tight">Go Desktop Admin</span>
+            <span className="text-lg font-semibold tracking-tight">
+              Go Desktop Admin
+            </span>
             <nav className="hidden gap-1 md:flex">
               {NAVIGATION.map((item) => (
                 <NavLink
