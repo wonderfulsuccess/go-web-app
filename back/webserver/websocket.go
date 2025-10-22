@@ -2,12 +2,13 @@ package webserver
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+
+	"github.com/wonderfulsuccess/go-web-app/back/logger"
 )
 
 // WSMessage represents the envelope shared between server and clients.
@@ -89,7 +90,7 @@ var upgrader = websocket.Upgrader{
 func (h *Hub) HandleWebSocket(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
-		log.Printf("failed to upgrade websocket: %v", err)
+		logger.Errorf("failed to upgrade websocket: %v", err)
 		return
 	}
 
@@ -137,7 +138,7 @@ func (c *Client) readPump() {
 			if websocket.IsCloseError(err, websocket.CloseGoingAway, websocket.CloseNormalClosure) {
 				return
 			}
-			log.Printf("websocket read error: %v", err)
+			logger.Errorf("websocket read error: %v", err)
 			return
 		}
 
@@ -172,7 +173,7 @@ func (c *Client) writePump() {
 				return
 			}
 			if err := c.conn.WriteJSON(msg); err != nil {
-				log.Printf("websocket write error: %v", err)
+				logger.Errorf("websocket write error: %v", err)
 				return
 			}
 		case <-ticker.C:

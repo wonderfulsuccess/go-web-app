@@ -13,18 +13,22 @@ let reconnectTimer: number | null = null;
 let reconnectAttempts = 0;
 let cachedUrl: string | null = null;
 const listeners = new Set<Listener>();
+const pendingMessages: Array<Omit<WSMessage, "timestamp">> = [];
 
 function getSocketUrl(): string {
   if (cachedUrl) {
     return cachedUrl;
   }
   const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-  const base = `${protocol}//${window.location.host}`;
+  const base = `${protocol}://${window.location.host}`;
   const clientId =
     typeof window.crypto !== "undefined" && "randomUUID" in window.crypto
       ? window.crypto.randomUUID()
       : Math.random().toString(36).slice(2);
   cachedUrl = `${base}/api/ws?clientId=${encodeURIComponent(clientId)}`;
+  if (import.meta.env.DEV) {
+    console.debug("[websocket] resolved socket url:", cachedUrl);
+  }
   return cachedUrl;
 }
 
@@ -48,7 +52,7 @@ export function connectWebSocket() {
     socket &&
     (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)
   ) {
-    return;
+    return socket;
   }
 
   try {
@@ -61,6 +65,7 @@ export function connectWebSocket() {
 
   socket.addEventListener("open", () => {
     reconnectAttempts = 0;
+    flushPending();
   });
 
   socket.addEventListener("message", (event) => {
@@ -73,12 +78,15 @@ export function connectWebSocket() {
   });
 
   socket.addEventListener("close", () => {
+    socket = null;
     scheduleReconnect();
   });
 
   socket.addEventListener("error", () => {
     socket?.close();
   });
+
+  return socket;
 }
 
 export function subscribeToMessages(listener: Listener) {
@@ -89,13 +97,34 @@ export function subscribeToMessages(listener: Listener) {
 }
 
 export function sendMessage<T>(message: Omit<WSMessage<T>, "timestamp">) {
-  if (!socket || socket.readyState !== WebSocket.OPEN) {
-    console.warn("Websocket not ready; skipping send.");
+  const currentSocket = connectWebSocket();
+  if (!currentSocket || currentSocket.readyState !== WebSocket.OPEN) {
+    pendingMessages.push(message as Omit<WSMessage, "timestamp">);
     return;
   }
+
+  sendNow(currentSocket, message);
+}
+
+function sendNow(socketInstance: WebSocket, message: Omit<WSMessage, "timestamp">) {
   const payload = {
     ...message,
     timestamp: new Date().toISOString(),
-  } satisfies WSMessage<T>;
-  socket.send(JSON.stringify(payload));
+  };
+  socketInstance.send(JSON.stringify(payload));
+}
+
+function flushPending() {
+  const activeSocket = socket;
+  if (!activeSocket || activeSocket.readyState !== WebSocket.OPEN) {
+    return;
+  }
+
+  while (pendingMessages.length > 0) {
+    const message = pendingMessages.shift();
+    if (!message) {
+      continue;
+    }
+    sendNow(activeSocket, message);
+  }
 }
