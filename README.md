@@ -48,6 +48,7 @@ front 为前端目录
    npm run dev
    ```
 3. 构建产物（会输出到 `back/webserver/dist`，供 Gin 静态服务使用）
+
    ```bash
    npm run build
    ```
@@ -67,3 +68,7 @@ front 为前端目录
 - 前端：`npm run build` 会在构建阶段执行 TypeScript 类型检查；如需格式或质量检查可扩展 `npm run lint`。
 
 > 当前 Vite 依赖需要 Node.js >= 20.19，若本地低于该版本会在构建阶段提示升级。
+
+## 开发指南
+
+1. https://ui.shadcn.com/themes 复制 css 覆盖 theme.css 即可切换主题
