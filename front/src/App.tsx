@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Navigate, NavLink, Route, Routes } from "react-router-dom";
-import { FiActivity, FiSettings, FiUsers } from "react-icons/fi";
+import { FiActivity, FiSettings, FiUsers, FiTerminal } from "react-icons/fi";
 
 import { connectWebSocket } from "@/api/websocket";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import DashboardPage from "@/pages/dashboard";
 import SettingsPage from "@/pages/settings";
 import UsersPage from "@/pages/users";
+import TestPage from "@/pages/test";
 
 const NAVIGATION = [
   {
@@ -21,6 +22,11 @@ const NAVIGATION = [
     to: "/settings",
     label: "系统设置",
     icon: <FiSettings className="h-4 w-4" />,
+  },
+  {
+    to: "/test",
+    label: "测试",
+    icon: <FiTerminal className="h-4 w-4" />,
   },
 ];
 
@@ -71,6 +77,7 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/users" element={<UsersPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/test" element={<TestPage />} />
         </Routes>
       </main>
       <footer className="border-t bg-background">
