@@ -10,6 +10,7 @@ import (
 	"github.com/wonderfulsuccess/go-web-app/back/database"
 	"github.com/wonderfulsuccess/go-web-app/back/logger"
 	"github.com/wonderfulsuccess/go-web-app/back/model"
+	"github.com/wonderfulsuccess/go-web-app/back/utils"
 	"github.com/wonderfulsuccess/go-web-app/back/webserver"
 )
 
@@ -21,6 +22,8 @@ func main() {
 	defer stop()
 
 	cfg := config.Load()
+
+	utils.MapPrint(cfg)
 
 	db, err := database.InitDatabase(cfg.Database)
 	if err != nil {
