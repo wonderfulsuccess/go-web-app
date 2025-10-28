@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { Navigate, NavLink, Route, Routes } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Navigate, NavLink, Route, Routes, useLocation } from "react-router-dom";
 import { FiActivity, FiSettings, FiUsers, FiTerminal } from "react-icons/fi";
 
 import { connectWebSocket } from "@/api/websocket";
@@ -35,8 +35,26 @@ function App() {
     connectWebSocket();
   }, []);
 
+  const location = useLocation();
+  const [displayLocation, setDisplayLocation] = useState(location);
+  const [transitionStage, setTransitionStage] =
+    useState<"fadeIn" | "fadeOut">("fadeIn");
+
+  useEffect(() => {
+    if (location.pathname !== displayLocation.pathname) {
+      setTransitionStage("fadeOut");
+    }
+  }, [location, displayLocation]);
+
+  const handleAnimationEnd = () => {
+    if (transitionStage === "fadeOut") {
+      setDisplayLocation(location);
+      setTransitionStage("fadeIn");
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-muted/20">
+    <div className="min-h-screen bg-muted/20 flex flex-col">
       <header className="border-b bg-background/80 backdrop-blur">
         <div className="container flex h-16 items-center justify-between gap-4">
           <div className="flex items-center gap-6">
@@ -71,16 +89,24 @@ function App() {
           </div>
         </div>
       </header>
-      <main className="container py-6">
-        <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/users" element={<UsersPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/test" element={<TestPage />} />
-        </Routes>
+      <main className="container py-6 flex-1">
+        <div
+          className={cn(
+            "route-transition",
+            transitionStage === "fadeIn" ? "route-fade-in" : "route-fade-out"
+          )}
+          onAnimationEnd={handleAnimationEnd}
+        >
+          <Routes location={displayLocation}>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/users" element={<UsersPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/test" element={<TestPage />} />
+          </Routes>
+        </div>
       </main>
-      <footer className="border-t bg-background">
+      <footer className="border-t bg-background mt-auto">
         <div className="container flex h-14 items-center justify-between text-sm text-muted-foreground">
           <span>© {new Date().getFullYear()} Go Desktop Admin</span>
           <span>构建于 Go + React</span>
